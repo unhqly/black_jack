@@ -18,8 +18,8 @@ class Game
       @cards.available_cards.delete_at(number)
     end
 
-    puts "Your cards:"
-    @player.cards.each { |card| puts card }
+    puts "#{@player.name}'s cards:"
+    @player.cards.each { |card| puts card}
 
     2.times do
       number = rand(@cards.available_cards.size)
@@ -29,33 +29,31 @@ class Game
 
     puts "Dealers cards: *******"
 
-    puts "Available cards"
-    @cards.available_cards.each { |card| puts card }
+#    puts "Available cards"
+#    @cards.available_cards.each { |card| puts card }
   end
 
   def count_sum
     @player.cards.each do |card|
       number = card.chars.first
-      puts "Number = #{number}, #{number.class}"
+#      puts "Number = #{number}, #{number.class}"
       if number == "A"
-        if @player.sum += 11 > 21
+        if @player.sum > 10
           @player.sum += 1
         else
           @player.sum += 11
         end
       else
-        puts "Hash of equivalents: #{@cards.equivalents}"
-        puts "Equivalent = #{@cards.equivalents[number]}"
-        @player.sum += @cards.equivalents[number]
+#        puts "Hash of equivalents: #{@cards.equivalents}"
+#        puts "Equivalent = #{@cards.equivalents[:"#{number.downcase}"]}"
+        @player.sum += @cards.equivalents[number.downcase]
       end
     end
 
-    puts "Player's sum = #{@player.sum}"
+    puts "#{@player.name}'s sum = #{@player.sum}"
   end
 end
 
 black_jack = Game.new
 black_jack.throw_cards
 black_jack.count_sum
-
-#TODO: fix hash problem: cant find value with key
