@@ -1,10 +1,4 @@
-class Dealer
+require_relative 'prototype'
 
-  attr_accessor :cards, :bank
-
-  def initialize
-    @cards = []
-    @bank = 100
-    @sum = 0
-  end
+class Dealer < Prototype
 end
