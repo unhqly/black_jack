@@ -126,13 +126,15 @@ loop do
   black_jack.show_player_cards
   puts "Dealer's cards: *****"
   black_jack.move(black_jack.player)
-  black_jack.calculate_results
   black_jack.refresh
 
   puts 'Do you want to play one more time? ("Yes"/"No")'
-  if gets.chomp == 'Yes'
+  choice = gets.chomp
+  case choice
+  
+  when 'Yes', 'yes'
     next
-  else
+  when 'No', 'no'
     return
   end
 end
