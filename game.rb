@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'prototype'
 require_relative 'dealer'
 require_relative 'player'
@@ -7,7 +9,7 @@ class Game
   attr_accessor :player, :dealer, :deck, :bank
 
   def initialize
-    puts "Enter your name please"
+    puts 'Enter your name please'
     @player = Player.new(gets.chomp)
     @dealer = Dealer.new
     @deck = Cards.new
@@ -16,6 +18,7 @@ class Game
 
   def refresh
     @deck = Cards.new
+    @bank = 0
     player.cards = []
     player.sum = 0
     dealer.cards = []
@@ -24,12 +27,12 @@ class Game
 
   def show_player_cards
     puts "#{@player.name}'s cards:"
-    @player.cards.each { |card| puts card['card']}
+    @player.cards.each { |card| puts card['card'] }
   end
 
   def show_dealer_cards
     puts "Dealer's cards:"
-    @dealer.cards.each { |card| puts card['card']}
+    @dealer.cards.each { |card| puts card['card'] }
   end
 
   def subtract_bank
@@ -39,35 +42,46 @@ class Game
   end
 
   def move(member)
-    if member.is_a?(Player)
-      puts 'Choose your next move'
+    case member
+    when Player
+      puts 'Choose your next move ("pass", "add" or "show")'
       choice = gets.chomp
 
       case choice
-      when 'Pass'
-        puts "The move goes to the dealer"
+      when 'Pass', 'pass'
+        puts 'The move goes to the dealer'
         move(dealer)
-      when 'Add'
+      when 'Add', 'add'
         if member.cards.size < 3
           member.add_card(deck.get_card)
-          puts "You receive one card"
-          show_player_cards
-          puts "The move goes to the dealer"
-          move(dealer)
+          puts 'You receive one card'
+          if player.cards.size == 3 && dealer.cards.size == 3
+            puts 'Both have 3 cards. Time to calculate'
+            calculate_results
+          else
+            show_player_cards
+            puts 'The move goes to the dealer'
+            move(dealer)
+          end
         else
-          puts "You have 3 cards already. The game is over"
+          puts 'You have 3 cards already. The game is over'
           calculate_results
         end
-      when 'Show'
+      when 'Show', 'show'
         calculate_results
       end
-    elsif member.is_a?(Dealer)
+    when Dealer
       if member.sum < 17
         member.add_card(deck.get_card)
-        puts "The dealer receives one card"
-        move(player)
+        puts 'The dealer receives one card'
+        if player.cards.size == 3 && dealer.cards.size == 3
+          puts 'Both have 3 cards. Time to calculate'
+          calculate_results
+        else
+          move(player)
+        end
       else
-        puts "The dealer skips a move"
+        puts 'The dealer skips a move'
         move(player)
       end
     end
@@ -79,22 +93,21 @@ class Game
     show_dealer_cards
     puts "Dealer's sum = #{dealer.sum}"
     if player.sum > 21
-      puts "You have more than 21 points. You lose"
+      puts 'You have more than 21 points. You lose'
       @dealer.balance += bank
-      @bank = 0
     elsif player.sum > dealer.sum
       puts "You're closer to 21 points than dealer. You won!"
       @player.balance += bank
-      @bank = 0
     elsif player.sum == dealer.sum
-      puts "Draw!"
-      @player.balance = bank/2
-      @dealer.balance = bank/2
-      @bank = 0
-    else 
+      puts 'Draw!'
+      @player.balance = bank / 2
+      @dealer.balance = bank / 2
+    elsif player.sum == 21 && dealer.sum > 21
+      puts 'You have 21 points. You won!'
+      @player.balance += bank
+    else
       puts "Dealer's closer to 21 points than you. You lose"
       @dealer.balance += bank
-      @bank = 0
     end
     show_balance
   end
@@ -116,8 +129,8 @@ loop do
   black_jack.calculate_results
   black_jack.refresh
 
-  puts "Do you want to play one more time?"
-  if gets.chomp == "Yes"
+  puts 'Do you want to play one more time? ("Yes"/"No")'
+  if gets.chomp == 'Yes'
     next
   else
     return
