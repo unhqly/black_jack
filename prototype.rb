@@ -11,14 +11,6 @@ class Prototype
 
   def add_card(card)
     cards << card
-    @sum += if card['card'].chars.first == 'A'
-              if sum > 10
-                1
-              else
-                11
-              end
-            else
-              card['equivalent']
-            end
+    @sum += card['equivalent']
   end
 end

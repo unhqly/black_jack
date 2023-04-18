@@ -82,15 +82,30 @@ class Game
         end
       else
         puts 'The dealer skips a move'
-        move(player)
+        if player.cards.size == 3
+          puts 'You have 3 cards. Time to calculate'
+          calculate_results
+        else
+          move(player)
+        end
       end
+    end
+  end
+
+  def check_ace(member)
+    member.cards.each do |card|
+      next unless card['card'].chars.first == 'A'
+
+      member.sum += 10 if member.sum <= 11
     end
   end
 
   def calculate_results
     show_player_cards
+    check_ace(player)
     puts "#{player.name}'s sum = #{player.sum}"
     show_dealer_cards
+    check_ace(dealer)
     puts "Dealer's sum = #{dealer.sum}"
     if player.sum > 21
       puts 'You have more than 21 points. You lose'
@@ -100,10 +115,10 @@ class Game
       @player.balance += bank
     elsif player.sum == dealer.sum
       puts 'Draw!'
-      @player.balance = bank / 2
-      @dealer.balance = bank / 2
-    elsif player.sum == 21 && dealer.sum > 21
-      puts 'You have 21 points. You won!'
+      @player.balance += bank / 2
+      @dealer.balance += bank / 2
+    elsif player.sum <= 21 && dealer.sum > 21
+      puts 'Dealer has more than 21 points. You won!'
       @player.balance += bank
     else
       puts "Dealer's closer to 21 points than you. You lose"
@@ -131,8 +146,9 @@ loop do
   puts 'Do you want to play one more time? ("Yes"/"No")'
   choice = gets.chomp
   case choice
-  
+
   when 'Yes', 'yes'
+    puts '---------------------------------------------'
     next
   when 'No', 'no'
     return
